@@ -20,7 +20,7 @@ $ npm install -g clickup-cli-tools
 $ clickup COMMAND
 running command...
 $ clickup (--version)
-clickup-cli-tools/0.0.1 darwin-x64 node-v14.17.5
+clickup-cli-tools/0.1.0 darwin-x64 node-v14.17.5
 $ clickup --help [COMMAND]
 USAGE
   $ clickup COMMAND
@@ -64,7 +64,7 @@ EXAMPLES
   $ clickup auth
 ```
 
-_See code: [dist/commands/auth.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.0.1/dist/commands/auth.ts)_
+_See code: [dist/commands/auth.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.1.0/dist/commands/auth.ts)_
 
 ## `clickup help [COMMAND]`
 
@@ -337,7 +337,7 @@ EXAMPLES
   $ clickup start PROD-880 -b master
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.0.1/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.1.0/dist/commands/start.ts)_
 
 ## `clickup task list`
 
@@ -400,5 +400,5 @@ EXAMPLES
   $ clickup view 12345
 ```
 
-_See code: [dist/commands/view.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.0.1/dist/commands/view.ts)_
+_See code: [dist/commands/view.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.1.0/dist/commands/view.ts)_
 <!-- commandsstop -->
