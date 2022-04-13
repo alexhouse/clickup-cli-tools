@@ -2,6 +2,7 @@ import Command from '../base';
 import { Flags, CliUx } from '@oclif/core'
 import * as inquirer from 'inquirer';
 import ClickUp from "../api/clickup";
+import * as chalk from 'chalk';
 
 export default class Auth extends Command {
   static description = 'authenticate with ClickUp'
@@ -15,10 +16,15 @@ export default class Auth extends Command {
     token: Flags.boolean({ char: 't', description: 'Auth using a token' }),
     // flag with no value (-f, --force)
     oauth: Flags.boolean({ char: 'o', description: 'Auth using oauth' }),
+    check: Flags.boolean({ description: 'Check current authentication' }),
   }
 
   public async run(): Promise<void> {
     const { flags } = await this.parse(Auth)
+
+    if (flags.check) {
+      return this.checkAuth();
+    }
 
     if (!flags.token && !flags.oauth) {
       const answers = await inquirer.prompt([
@@ -82,6 +88,15 @@ export default class Auth extends Command {
       }
 
       this.log('All set!');
+    }
+  }
+
+  private async checkAuth() {
+    try {
+      const user = await this.clickup!.currentUser();
+      this.log(`Authenticated as ${chalk.hex(user.color).bold(user.username)}`);
+    } catch (err) {
+      this.error(chalk.red('You are not currently authenticated'), { exit: 100 });
     }
   }
 }
