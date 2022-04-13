@@ -43,6 +43,19 @@ export declare module ClickUpResponses {
     id: string;
     name: string;
     access: boolean;
+
+    orderindex: number;
+    status: string | null;
+    priority: Priority | null;
+    assignee: User | null;
+    task_count: number;
+    due_date: string;
+    start_date: string;
+    folder: Folder;
+    space: Space;
+    archived: boolean;
+    override_statuses: boolean;
+    permission_level: string;
   }
 
   export interface Project {
@@ -69,7 +82,7 @@ export declare module ClickUpResponses {
     archived?: boolean;
   }
 
-  export interface Task {
+  export type Task = {
     id: string;
     custom_id: string;
     name: string;
