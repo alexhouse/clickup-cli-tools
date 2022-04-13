@@ -6,18 +6,14 @@ import { ConfigProps } from "../base";
 class ClickUp {
   private static instance: ClickUp;
   private axios?: AxiosInstance;
-  private configPath?: string;
-  private token?: string;
-  private userId?: string;
+  private config?: ConfigProps;
 
-  private constructor({ configPath, token, userId }: { configPath?: string } & ConfigProps) {
+  private constructor({ configPath, ...config }: { configPath?: string } & ConfigProps) {
     if (configPath) {
-      this.configPath = configPath;
-      this.loadConfig()
+      this.loadConfig(configPath)
         .then(() => this.createAxios());
     } else {
-      this.token = token;
-      this.userId = userId;
+      this.config = config;
       this.createAxios();
     }
   }
@@ -25,7 +21,7 @@ class ClickUp {
   public static init(userConfig: ConfigProps) {
     if (!ClickUp.instance) {
       if (userConfig.token) {
-        ClickUp.instance = new ClickUp({ token: userConfig.token, userId: userConfig.userId });
+        ClickUp.instance = new ClickUp(userConfig);
       }
     }
   }
@@ -43,15 +39,8 @@ class ClickUp {
   }
 
   public async currentUser(): Promise<ClickUpResponses.User> {
-    try {
-      const { data } = await this.axios!.get('/user');
-      return data?.user;
-    } catch (error) {
-      console.error('API failed');
-      console.error(JSON.stringify(error));
-    }
-
-    return {} as ClickUpResponses.User;
+    const { data } = await this.axios!.get('/user');
+    return data?.user;
   }
 
   public async retrieveTask(taskId: string, teamId: string): Promise<ClickUpResponses.Task | undefined> {
@@ -64,19 +53,59 @@ class ClickUp {
     }
   }
 
-  public async getSpace(spaceId: string): Promise<ClickUpResponses.Space | undefined> {
-    try {
-      const { data } = await this.axios!.get(`/space/${spaceId}`);
-      return data;
-    } catch (error) {
-      console.error('API failed');
-      console.error(JSON.stringify(error));
+  public async getSpace(spaceId: string): Promise<ClickUpResponses.Space> {
+    const { data } = await this.axios!.get(`/space/${spaceId}`);
+    return data;
+  }
+
+  public async listLists(folderId: string): Promise<ClickUpResponses.List[]> {
+    const { data } = await this.axios!.get(`/folder/${folderId}/list`);
+    return data.lists;
+  }
+
+  public async listFolders(spaceId: string): Promise<ClickUpResponses.Folder[]> {
+    const { data } = await this.axios!.get(`/space/${spaceId}/folder`);
+    return data.folders;
+  }
+
+  public async listSpaces(): Promise<ClickUpResponses.Space[]> {
+    const { data } = await this.axios!.get(`/team/${this.config?.defaultTeam?.id}/space`);
+    return data.spaces;
+  }
+
+  public async listTasks({
+                           mine = false,
+                           space,
+                           folder,
+                           list
+                         }: { mine?: boolean, space?: string, folder?: string, list?: string }): Promise<ClickUpResponses.Task[] | undefined> {
+
+    const params = new URLSearchParams();
+    let url = `/team/${this.config!.defaultTeam!.id}/task`;
+
+    if (mine) {
+      params.set('assignees[]', this.config!.userId!);
     }
+
+    if (list) {
+      url = `/list/${list}/task`;
+    } else {
+      if (space) {
+        params.set('space_ids[]', space);
+      }
+      if (folder) {
+        params.set('folder_ids[]', folder);
+      }
+    }
+
+    const { data } = (await this.axios!.get(`${url}?${decodeURIComponent(params.toString())}`));
+
+    return data.tasks;
   }
 
   public async startTask(task: ClickUpResponses.Task, taskStatus: string): Promise<ClickUpResponses.Task | undefined> {
     let assignees = new Set(task.assignees?.map(assignee => assignee.id) ?? []);
-    assignees.add(parseInt(this.userId!));
+    assignees.add(parseInt(this.config!.userId!));
 
     try {
       const { data, status } = await this.axios!.put(`/task/${task.id}`, {
@@ -105,14 +134,8 @@ class ClickUp {
     return [];
   }
 
-  private async loadConfig() {
-    if (!this.configPath) {
-      return;
-    }
-
-    const config = await fs.readJson(this.configPath) as ConfigProps;
-    this.token = config.token;
-    this.userId = config.userId;
+  private async loadConfig(configPath: string) {
+    this.config = await fs.readJson(configPath) as ConfigProps;
   }
 
   private createAxios() {
@@ -120,7 +143,7 @@ class ClickUp {
       baseURL: 'https://api.clickup.com/api/v2',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `${this.token}`,
+        'Authorization': `${this.config!.token}`,
       },
     });
   }
