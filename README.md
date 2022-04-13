@@ -41,6 +41,7 @@ USAGE
 * [`clickup plugins:uninstall PLUGIN...`](#clickup-pluginsuninstall-plugin-2)
 * [`clickup plugins update`](#clickup-plugins-update)
 * [`clickup start [TASKID]`](#clickup-start-taskid)
+* [`clickup task list`](#clickup-task-list)
 * [`clickup view [TASKID]`](#clickup-view-taskid)
 
 ## `clickup auth`
@@ -49,11 +50,12 @@ authenticate with ClickUp
 
 ```
 USAGE
-  $ clickup auth [-t] [-o]
+  $ clickup auth [-t] [-o] [--check]
 
 FLAGS
   -o, --oauth  Auth using oauth
   -t, --token  Auth using a token
+  --check      Check current authentication
 
 DESCRIPTION
   authenticate with ClickUp
@@ -336,6 +338,52 @@ EXAMPLES
 ```
 
 _See code: [dist/commands/start.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.0.1/dist/commands/start.ts)_
+
+## `clickup task list`
+
+List ClickUp tasks for your default team optionally filtered by space/folder/list or other criteria
+
+```
+USAGE
+  $ clickup task list [-i | -s <value> | -f <value>] [-l <value>  ] [-a | -m] [--color] [--columns <value> |
+    -x] [--sort <value>] [--filter <value>] [--output csv|json|yaml |  | [--csv | --no-truncate]] [--no-header | ]
+
+FLAGS
+  -x, --extended     show extra columns
+  --[no-]color       Colorize output
+  --columns=<value>  only show provided columns (comma-separated)
+  --csv              output is csv format [alias: --output=csv]
+  --filter=<value>   filter property by partial string matching, ex: name=foo
+  --no-header        hide table header from output
+  --no-truncate      do not truncate output to fit screen
+  --output=<option>  output in a more machine friendly format
+                     <options: csv|json|yaml>
+  --sort=<value>     property to sort by (prepend '-' for descending)
+
+FILTER FLAGS
+  -a, --all             Show all tasks
+  -f, --folder=<value>  Only show tasks in the given folder
+  -l, --list=<value>    Only show tasks in the given list
+  -m, --mine            Only show my tasks
+  -s, --space=<value>   Only show tasks in the given space
+
+INTERACTIVE MODE FLAGS
+  -i, --interactive  Choose a space to list tasks in
+
+DESCRIPTION
+  List ClickUp tasks for your default team optionally filtered by space/folder/list or other criteria
+
+EXAMPLES
+  $ clickup task list # view your own tasks
+
+  $ clickup task list --all # view all tasks
+
+  $ clickup task list --interactive # use interactive mode to filter your tasks down to a list
+
+  $ clickup task list --folder xyz # view your tasks in a folder
+
+  $ clickup task list --list abc --all # view all tasks in a list
+```
 
 ## `clickup view [TASKID]`
 
