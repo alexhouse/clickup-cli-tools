@@ -1,5 +1,5 @@
 import Command from '../base';
-import { Flags, CliUx } from '@oclif/core'
+import { CliUx, Flags } from '@oclif/core'
 import * as inquirer from 'inquirer';
 import ClickUp from "../api/clickup";
 import * as chalk from 'chalk';
@@ -44,7 +44,7 @@ export default class Auth extends Command {
     }
 
     if (flags.token) {
-      const {token: existingToken} = this.userConfig;
+      const { token: existingToken } = this.userConfig;
       const { token } = await inquirer.prompt([
         {
           type: 'password',
@@ -77,7 +77,7 @@ export default class Auth extends Command {
           type: 'list',
           name: 'team',
           message: 'Choose your default team',
-          choices: teams.map(team => ({value: {id: team.id, name: team.name}, name: team.name})),
+          choices: teams.map(team => ({ value: { id: team.id, name: team.name }, name: team.name })),
           default: teams[0]?.name,
         }
       ])

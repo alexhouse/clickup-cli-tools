@@ -4,6 +4,7 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import ClickUp from "./api/clickup";
 import * as assert from "assert";
+import * as chalk from 'chalk';
 
 export type ConfigProps = {
   token?: string;
@@ -22,11 +23,11 @@ export default abstract class extends Command {
     // do some initialization
     const configPath = path.join(this.config.configDir, 'config.json');
     if (fs.existsSync(configPath)) {
-      this.log(`Loading user configuration from ${configPath}`);
+      this.log(chalk.hidden(`Loading user configuration from ${configPath}`));
       this.userConfig = await fs.readJSON(configPath) ?? {};
     }
 
-    if (this.userConfig) {
+    if (this.userConfig?.userId) {
       ClickUp.init(this.userConfig);
       this.clickup = ClickUp.getInstance();
     }
