@@ -45,11 +45,15 @@ export default class Auth extends Command {
 
     if (flags.token) {
       const { token: existingToken } = this.userConfig;
+      CliUx.ux.open('https://app.clickup.com/settings/apps');
+      CliUx.ux.log(`Create your token under ${chalk.green('ClickUp My Settings -> Apps')} and then copy it below`);
+
       const { token } = await inquirer.prompt([
         {
           type: 'password',
           name: 'token',
           message: 'Enter your generated ClickUp API token',
+          suffix: existingToken ? chalk.gray(` (or press enter to use existing token)`) : '',
           default: existingToken,
         }
       ]);
@@ -84,7 +88,7 @@ export default class Auth extends Command {
           choices: teams.map(team => ({ value: { id: team.id, name: team.name }, name: team.name })),
           default: teams[0]?.name,
         }
-      ])
+      ]);
 
       if (team) {
         this.log(`Setting default team to ${team.name} (${team.id})`);
