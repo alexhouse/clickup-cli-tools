@@ -5,6 +5,7 @@ import * as path from "path";
 import ClickUp from "./api/clickup";
 import * as assert from "assert";
 import * as chalk from 'chalk';
+import { ClickUpResponses } from "./api/types";
 
 export type ConfigProps = {
   token?: string;
@@ -12,7 +13,7 @@ export type ConfigProps = {
     id: string;
     name: string;
   };
-  userId?: string;
+  userId?: ClickUpResponses.User['id'];
 }
 
 export default abstract class extends Command {

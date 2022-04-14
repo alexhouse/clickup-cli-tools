@@ -84,7 +84,7 @@ class ClickUp {
     let url = `/team/${this.config!.defaultTeam!.id}/task`;
 
     if (mine) {
-      params.set('assignees[]', this.config!.userId!);
+      params.set('assignees[]', String(this.config!.userId!));
     }
 
     if (list) {
@@ -105,7 +105,7 @@ class ClickUp {
 
   public async startTask(task: ClickUpResponses.Task, taskStatus: string): Promise<ClickUpResponses.Task | undefined> {
     let assignees = new Set(task.assignees?.map(assignee => assignee.id) ?? []);
-    assignees.add(parseInt(this.config!.userId!));
+    assignees.add(this.config!.userId!);
 
     try {
       const { data, status } = await this.axios!.put(`/task/${task.id}`, {
