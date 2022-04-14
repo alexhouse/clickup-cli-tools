@@ -59,11 +59,15 @@ export default class Auth extends Command {
       CliUx.ux.action.stop();
 
       if (username) {
-        await this.updateConfig('token', token);
-        await this.updateConfig('userId', userId)
+        await this.updateConfig({
+          token,
+          userId,
+        });
+
         this.log(`Authenticated as ${username}`);
       } else {
         await this.updateConfig('token', undefined);
+
         this.warn('Invalid token');
         this.exit(1);
       }

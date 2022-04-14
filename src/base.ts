@@ -34,11 +34,20 @@ export default abstract class extends Command {
     }
   }
 
-  protected async updateConfig(key: keyof ConfigProps, val: any) {
-    this.userConfig[key] = val;
+  protected async updateConfig(key: ConfigProps | keyof ConfigProps, val?: any) {
+    if (!val && typeof key === 'object') {
+      this.userConfig = {
+        ...this.userConfig,
+        ...key
+      };
+    } else if (typeof key === 'string') {
+      this.userConfig[key] = val;
+    }
+
     if (!fs.pathExistsSync(this.config.configDir)) {
       await fs.mkdirp(this.config.configDir);
     }
+
     await fs.writeJSON(path.join(this.config.configDir, 'config.json'), this.userConfig);
   }
 
