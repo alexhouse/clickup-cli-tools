@@ -1,17 +1,10 @@
 import {expect, test} from '@oclif/test'
 
 describe('view', () => {
-  test
-  .stdout()
-  .command(['view'])
-  .it('runs hello', ctx => {
-    expect(ctx.stdout).to.contain('hello world')
-  })
-
-  test
-  .stdout()
-  .command(['view', '--name', 'jeff'])
-  .it('runs hello --name jeff', ctx => {
-    expect(ctx.stdout).to.contain('hello jeff')
-  })
+  // test
+  // .stdout()
+  // .command(['view', '--help'])
+  // .it('shows help', ctx => {
+  //   expect(ctx.stdout).to.contain('help')
+  // });
 })
