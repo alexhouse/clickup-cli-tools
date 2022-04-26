@@ -3,6 +3,7 @@ import { CliUx, Flags } from '@oclif/core'
 import * as inquirer from 'inquirer';
 import ClickUp from "../api/clickup";
 import * as chalk from 'chalk';
+import SetDefaultTeam from './auth/team';
 
 export default class Auth extends Command {
   static description = 'authenticate with ClickUp'
@@ -76,24 +77,7 @@ export default class Auth extends Command {
         this.exit(1);
       }
 
-      CliUx.ux.action.start('Fetching teams');
-      const teams = await ClickUp.getInstance().listTeams();
-      CliUx.ux.action.stop();
-
-      const { team } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'team',
-          message: 'Choose your default team',
-          choices: teams.map(team => ({ value: { id: team.id, name: team.name }, name: team.name })),
-          default: teams[0]?.name,
-        }
-      ]);
-
-      if (team) {
-        this.log(`Setting default team to ${team.name} (${team.id})`);
-        await this.updateConfig('defaultTeam', { id: team.id, name: team.name });
-      }
+      await SetDefaultTeam.run();
 
       this.log('All set!');
     }
