@@ -82,6 +82,20 @@ export declare module ClickUpResponses {
     archived?: boolean;
   }
 
+  export interface View {
+    id: string;
+    name: string;
+    type: 'doc' | 'board';
+    date_created: string;
+    creator: number;
+    visibility: string;
+    protected: boolean;
+    protected_note?: string;
+    protected_by?: string;
+    date_protected?: string;
+    orderindex?: string;
+  }
+
   export type Task = {
     id: string;
     custom_id: string;

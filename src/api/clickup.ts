@@ -3,6 +3,14 @@ import * as fs from "fs-extra";
 import { ClickUpResponses } from './types';
 import { ConfigProps } from "../base";
 
+type ListTaskProps = {
+  mine?: boolean;
+  space?: string;
+  folder?: string;
+  list?: string;
+  includeDone?: boolean;
+};
+
 class ClickUp {
   private static instance: ClickUp;
   private axios?: AxiosInstance;
@@ -69,26 +77,38 @@ class ClickUp {
   }
 
   public async listSpaces(): Promise<ClickUpResponses.Space[]> {
-    const { data } = await this.axios!.get(`/team/${this.config?.defaultTeam?.id}/space`);
-    return data.spaces;
+    const { data: { spaces } } = await this.axios!.get(`/team/${this.config?.defaultTeam?.id}/space`);
+    return spaces;
   }
 
   public async listTasks({
                            mine = false,
                            space,
                            folder,
-                           list
-                         }: { mine?: boolean, space?: string, folder?: string, list?: string }): Promise<ClickUpResponses.Task[] | undefined> {
-
-    const params = new URLSearchParams();
+                           list,
+                           includeDone = false,
+                         }: ListTaskProps): Promise<ClickUpResponses.Task[] | undefined> {
     let url = `/team/${this.config!.defaultTeam!.id}/task`;
 
+    const params = new URLSearchParams({
+      subtasks: 'true',
+    });
     if (mine) {
       params.set('assignees[]', String(this.config!.userId!));
     }
 
+    // if (!includeDone && space) {
+      // this.config?.statuses?.[space]?.forEach(status => status.indexOf('done') === -1 && params.append('statuses[]', encodeURIComponent(status)));
+    // }
+
     if (list) {
-      url = `/list/${list}/task`;
+      const { data: { views } } = await this.axios!.get(`/list/${list}/view`);
+      const taskViews = views.filter((view: ClickUpResponses.View) => view.type === 'board');
+      if (taskViews.length > 0) {
+        url = `/view/${taskViews[0].id}/task`;
+      } else {
+        url = `/list/${list}/task`;
+      }
     } else {
       if (space) {
         params.set('space_ids[]', space);
@@ -98,9 +118,12 @@ class ClickUp {
       }
     }
 
-    const { data } = (await this.axios!.get(`${url}?${decodeURIComponent(params.toString())}`));
-
-    return data.tasks;
+    try {
+      const { data: { tasks } } = await this.axios!.get(`${url}?${decodeURIComponent(params.toString())}`);
+      return tasks;
+    } catch (err) {
+      console.error('Error fetching tasks', err);
+    }
   }
 
   public async startTask(task: ClickUpResponses.Task, taskStatus: string): Promise<ClickUpResponses.Task | undefined> {

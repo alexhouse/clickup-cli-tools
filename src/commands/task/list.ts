@@ -22,24 +22,22 @@ export default class TaskList extends Command {
     interactive: Flags.boolean({
       char: 'i',
       description: 'Choose a space to list tasks in',
-      exclusive: ['space', 'folder'], helpGroup: 'interactive mode'
+      // exclusive: ['space', 'folder'],
+      helpGroup: 'interactive mode'
     }),
     space: Flags.string({
       char: 's',
       description: 'Only show tasks in the given space',
-      exclusive: ['interactive'],
       helpGroup: 'filter'
     }),
     folder: Flags.string({
       char: 'f',
       description: 'Only show tasks in the given folder',
-      exclusive: ['interactive'],
       dependsOn: ['space'], helpGroup: 'filter'
     }),
     list: Flags.string({
       char: 'l',
       description: 'Only show tasks in the given list',
-      exclusive: ['interactive'],
       dependsOn: ['space', 'folder'], helpGroup: 'filter'
     }),
     mine: Flags.boolean({ char: 'm', description: 'Only show my tasks', default: true, helpGroup: 'filter' }),
@@ -50,6 +48,7 @@ export default class TaskList extends Command {
       exclusive: ['mine'],
       helpGroup: 'filter'
     }),
+    includeDone: Flags.boolean({ description: 'Include completed tasks', default: false, helpGroup: 'filter' }),
 
     color: Flags.boolean({ description: 'Colorize output', default: true, allowNo: true }),
     ...CliUx.ux.table.flags(),
@@ -66,11 +65,9 @@ export default class TaskList extends Command {
       await this.interactive(flags);
     }
 
-    console.dir(flags);
-
     CliUx.ux.prideAction.start('Fetching tasks');
-    const { mine, space, folder, list } = flags;
-    const tasks = await this.clickup!.listTasks({ mine, space, folder, list })
+    const { mine, space, folder, list, includeDone } = flags;
+    const tasks = await this.clickup!.listTasks({ mine, space, folder, list, includeDone })
       .then(tasks => tasks?.sort((a, b) => a.status.orderindex - b.status.orderindex))
     CliUx.ux.prideAction.stop();
 
@@ -82,7 +79,7 @@ export default class TaskList extends Command {
       },
       priority: {
         header: 'Priority',
-        get: (task: ClickUpResponses.Task) => chalk.hex(task.priority.color).bold(task.priority.priority),
+        get: (task: ClickUpResponses.Task) => chalk.hex(task.priority?.color ?? chalk.visible).bold(task.priority?.priority ?? '?'),
       },
       name: {
         header: 'Name',
@@ -119,17 +116,32 @@ export default class TaskList extends Command {
    */
   private async interactive(flags: OutputFlags<any>) {
     const ui = new inquirer.ui.BottomBar();
+    const spaces = (await this.clickup!.listSpaces()).map(space => ({
+      name: space.name,
+      value: space,
+    }));
+
+    const initialAnswers: any = {};
+    if (flags.space) {
+      const space = spaces.find(s => s.name === flags.space);
+      if (space) {
+        initialAnswers.space = space.value;
+
+        if (flags.folder) {
+          const folder = (await this.clickup!.listFolders(space.value.id)).find(folder => folder.name === flags.folder);
+          if (folder) {
+            initialAnswers.folder = folder;
+          }
+        }
+      }
+    }
+
     const answers = await inquirer.prompt([
       {
         type: 'list',
         name: 'space',
         message: 'Choose a space to list tasks in',
-        choices: (await this.clickup!.listSpaces()).map(space => ({
-          name: space.name,
-          short: space.name,
-          value: space,
-        })),
-        loop: true,
+        choices: spaces,
       },
       {
         type: 'list',
@@ -142,14 +154,10 @@ export default class TaskList extends Command {
           return [
             ...folders.map(folder => ({
               name: folder.name,
-              short: folder.name,
               value: folder,
             })),
-            // new inquirer.Separator(),
-            // 'Back'
           ];
         },
-        loop: true,
       },
       {
         type: 'list',
@@ -168,7 +176,7 @@ export default class TaskList extends Command {
           ];
         }
       }
-    ]);
+    ], initialAnswers);
 
     flags.space = answers.space.id;
     flags.folder = answers.folder.id;
