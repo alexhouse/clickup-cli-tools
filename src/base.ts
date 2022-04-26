@@ -14,6 +14,8 @@ export type ConfigProps = {
     name: string;
   };
   userId?: ClickUpResponses.User['id'];
+  statuses?: Record<ClickUpResponses.Space['id'], string[]>;
+  lastSync?: number;
 }
 
 export default abstract class extends Command {
