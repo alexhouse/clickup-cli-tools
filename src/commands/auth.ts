@@ -45,7 +45,7 @@ export default class Auth extends Command {
     }
 
     if (flags.token) {
-      const { token: existingToken } = this.userConfig;
+      const { token: existingToken } = Command.userConfig;
       CliUx.ux.open('https://app.clickup.com/settings/apps');
       CliUx.ux.log(`Create your token under ${chalk.green('ClickUp My Settings -> Apps')} and then copy it below`);
 

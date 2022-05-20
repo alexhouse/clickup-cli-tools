@@ -18,8 +18,8 @@ export type ConfigProps = {
   lastSync?: number;
 }
 
-export default abstract class extends Command {
-  public userConfig: ConfigProps = {};
+export default abstract class BaseCommand extends Command {
+  static userConfig: ConfigProps = {};
   public clickup?: ClickUp;
 
   async init() {
@@ -27,30 +27,30 @@ export default abstract class extends Command {
     const configPath = path.join(this.config.configDir, 'config.json');
     if (fs.existsSync(configPath)) {
       this.log(chalk.hidden(`Loading user configuration from ${configPath}`));
-      this.userConfig = await fs.readJSON(configPath) ?? {};
+      BaseCommand.userConfig = await fs.readJSON(configPath) ?? {};
     }
 
-    if (this.userConfig?.userId) {
-      ClickUp.init(this.userConfig);
+    if (BaseCommand.userConfig?.userId) {
+      ClickUp.init(BaseCommand.userConfig);
       this.clickup = ClickUp.getInstance();
     }
   }
 
   protected async updateConfig(key: ConfigProps | keyof ConfigProps, val?: any) {
     if (!val && typeof key === 'object') {
-      this.userConfig = {
-        ...this.userConfig,
+      BaseCommand.userConfig = {
+        ...BaseCommand.userConfig,
         ...key
       };
     } else if (typeof key === 'string') {
-      this.userConfig[key] = val;
+      BaseCommand.userConfig[key] = val;
     }
 
     if (!fs.pathExistsSync(this.config.configDir)) {
       await fs.mkdirp(this.config.configDir);
     }
 
-    await fs.writeJSON(path.join(this.config.configDir, 'config.json'), this.userConfig);
+    await fs.writeJSON(path.join(this.config.configDir, 'config.json'), BaseCommand.userConfig);
   }
 
   protected async showProgress<T>(message: string, action: () => Promise<T>): Promise<T> {
@@ -62,8 +62,8 @@ export default abstract class extends Command {
   }
 
   protected teamId(): string {
-    assert(this.userConfig.defaultTeam, 'You must set a default team in your config');
-    const { id } = this.userConfig.defaultTeam!;
+    assert(BaseCommand.userConfig.defaultTeam, 'You must set a default team in your config');
+    const { id } = BaseCommand.userConfig.defaultTeam!;
     return id;
   }
 }
