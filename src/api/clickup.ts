@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import * as fs from "fs-extra";
-import { ClickUpResponses } from './types';
+import { ClickUpRequests, ClickUpResponses } from './types';
 import { ConfigProps } from "../base";
 
 type ListTaskProps = {
@@ -54,6 +54,16 @@ class ClickUp {
   public async retrieveTask(taskId: string, teamId: string): Promise<ClickUpResponses.Task | undefined> {
     try {
       const { data } = await this.axios!.get(`/task/${taskId}?custom_task_ids=true&team_id=${teamId}`);
+      return data;
+    } catch (error) {
+      console.error('API failed');
+      console.error(JSON.stringify(error));
+    }
+  }
+
+  public async updateTask(taskId: string, changes: Partial<ClickUpRequests.Task>): Promise<ClickUpResponses.Task | undefined> {
+    try {
+      const { data } = await this.axios!.put(`/task/${taskId}`, changes);
       return data;
     } catch (error) {
       console.error('API failed');
@@ -138,6 +148,8 @@ class ClickUp {
 
       if (status >= 200 && status < 300) {
         return data;
+      } else {
+        console.error(JSON.stringify(data));
       }
     } catch (error) {
       console.error('API failed');

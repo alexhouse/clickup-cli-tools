@@ -261,3 +261,26 @@ export declare module ClickUpResponses {
   }
 }
 
+declare module ClickUpRequests {
+  export interface Task {
+    name?: string;
+    description?: string;
+    status?: string;
+    priority?: number;
+    due_date?: number;
+    due_date_time?: boolean;
+    parent?: string;
+    time_estimate?: number;
+    start_date?: number;
+    start_date_time?: boolean;
+    assignees?: {
+      add?: number[],
+      rem?: number[];
+    };
+    watchers?: {
+      add?: number[];
+      rem?: number[];
+    };
+    archived?: boolean;
+  }
+}
