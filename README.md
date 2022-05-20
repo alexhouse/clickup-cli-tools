@@ -44,6 +44,7 @@ USAGE
 * [`clickup plugins update`](#clickup-plugins-update)
 * [`clickup start [TASKID]`](#clickup-start-taskid)
 * [`clickup task list`](#clickup-task-list)
+* [`clickup task update [ID]`](#clickup-task-update-id)
 * [`clickup view [TASKID]`](#clickup-view-taskid)
 
 ## `clickup auth`
@@ -420,6 +421,26 @@ EXAMPLES
   $ clickup task list --folder xyz # view your tasks in a folder
 
   $ clickup task list --list abc --all # view all tasks in a list
+```
+
+## `clickup task update [ID]`
+
+describe the command here
+
+```
+USAGE
+  $ clickup task update [ID] [-s <value>]
+
+FLAGS
+  -s, --status=<value>  new status to change to
+
+DESCRIPTION
+  describe the command here
+
+EXAMPLES
+  $ clickup task update
+
+  $ clickup task update --status done PROD-1234
 ```
 
 ## `clickup view [TASKID]`
