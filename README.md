@@ -20,7 +20,7 @@ $ npm install -g clickup-cli-tools
 $ clickup COMMAND
 running command...
 $ clickup (--version)
-clickup-cli-tools/0.2.0 darwin-x64 node-v14.17.5
+clickup-cli-tools/0.3.0 darwin-x64 node-v14.17.5
 $ clickup --help [COMMAND]
 USAGE
   $ clickup COMMAND
@@ -30,6 +30,8 @@ USAGE
 # Commands
 <!-- commands -->
 * [`clickup auth`](#clickup-auth)
+* [`clickup auth sync`](#clickup-auth-sync)
+* [`clickup auth team [TEAMNAME]`](#clickup-auth-team-teamname)
 * [`clickup help [COMMAND]`](#clickup-help-command)
 * [`clickup plugins`](#clickup-plugins)
 * [`clickup plugins:install PLUGIN...`](#clickup-pluginsinstall-plugin)
@@ -64,7 +66,40 @@ EXAMPLES
   $ clickup auth
 ```
 
-_See code: [dist/commands/auth.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.2.0/dist/commands/auth.ts)_
+_See code: [dist/commands/auth.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.3.0/dist/commands/auth.ts)_
+
+## `clickup auth sync`
+
+synchronize stored settings for the known spaces - this includes statuses, priorities, etc
+
+```
+USAGE
+  $ clickup auth sync
+
+DESCRIPTION
+  synchronize stored settings for the known spaces - this includes statuses, priorities, etc
+
+EXAMPLES
+  $ clickup auth sync
+```
+
+## `clickup auth team [TEAMNAME]`
+
+choose your default team
+
+```
+USAGE
+  $ clickup auth team [TEAMNAME]
+
+ARGUMENTS
+  TEAMNAME  The name of the team you would like to set as default
+
+DESCRIPTION
+  choose your default team
+
+EXAMPLES
+  $ clickup auth team
+```
 
 ## `clickup help [COMMAND]`
 
@@ -337,7 +372,7 @@ EXAMPLES
   $ clickup start PROD-880 -b master
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.2.0/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.3.0/dist/commands/start.ts)_
 
 ## `clickup task list`
 
@@ -345,8 +380,9 @@ List ClickUp tasks for your default team optionally filtered by space/folder/lis
 
 ```
 USAGE
-  $ clickup task list [-i | -s <value> | -f <value>] [-l <value>  ] [-a | -m] [--color] [--columns <value> |
-    -x] [--sort <value>] [--filter <value>] [--output csv|json|yaml |  | [--csv | --no-truncate]] [--no-header | ]
+  $ clickup task list [-i] [-l <value>  [-f <value> -s <value>]] [-a | -m] [--includeDone] [--color] [--columns
+    <value> | -x] [--sort <value>] [--filter <value>] [--output csv|json|yaml |  | [--csv | --no-truncate]] [--no-header
+    | ]
 
 FLAGS
   -x, --extended     show extra columns
@@ -366,6 +402,7 @@ FILTER FLAGS
   -l, --list=<value>    Only show tasks in the given list
   -m, --mine            Only show my tasks
   -s, --space=<value>   Only show tasks in the given space
+  --includeDone         Include completed tasks
 
 INTERACTIVE MODE FLAGS
   -i, --interactive  Choose a space to list tasks in
@@ -400,5 +437,5 @@ EXAMPLES
   $ clickup view 12345
 ```
 
-_See code: [dist/commands/view.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.2.0/dist/commands/view.ts)_
+_See code: [dist/commands/view.ts](https://github.com/alexhouse/clickup-cli-tools/blob/v0.3.0/dist/commands/view.ts)_
 <!-- commandsstop -->
