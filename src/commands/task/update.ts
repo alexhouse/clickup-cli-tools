@@ -48,7 +48,7 @@ export default class TaskUpdate extends Command {
 
   private async chooseStatus(task: ClickUpResponses.Task): Promise<string> {
     const statuses = task.space.statuses;
-    let statusMap: Array<{name: string, value: string}> = [];
+    let statusMap: Array<{ name: string, value: string }> = [];
 
     if (statuses) {
       statusMap = statuses.map(status => ({

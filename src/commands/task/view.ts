@@ -18,7 +18,7 @@ export default class TaskView extends Command {
     const { taskId } = args;
     assert(taskId, 'You must provide a task id');
 
-    const {id: teamId} = Command.userConfig.defaultTeam ?? {};
+    const { id: teamId } = Command.userConfig.defaultTeam ?? {};
     assert(teamId, 'You must set a default team in your config');
 
     this.log(`viewing ${taskId} from ClickUp`);

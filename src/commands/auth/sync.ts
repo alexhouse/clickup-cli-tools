@@ -1,4 +1,4 @@
-import { CliUx, Flags } from '@oclif/core'
+import { CliUx } from '@oclif/core'
 import Command from '../../base'
 import { ClickUpResponses } from "../../api/types";
 

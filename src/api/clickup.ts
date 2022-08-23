@@ -108,7 +108,7 @@ class ClickUp {
     }
 
     // if (!includeDone && space) {
-      // this.config?.statuses?.[space]?.forEach(status => status.indexOf('done') === -1 && params.append('statuses[]', encodeURIComponent(status)));
+    // this.config?.statuses?.[space]?.forEach(status => status.indexOf('done') === -1 && params.append('statuses[]', encodeURIComponent(status)));
     // }
 
     if (list) {
