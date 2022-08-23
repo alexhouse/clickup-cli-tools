@@ -1,10 +1,10 @@
 import { CliUx, Flags } from '@oclif/core'
 import * as assert from "assert";
-import Command from '../base'
+import Command from '../../base'
 import * as Listr from 'listr';
 import { exec, execSync } from 'child_process';
 
-export default class Start extends Command {
+export default class TaskStart extends Command {
   static description = 'Start a ClickUp task. Checks out a branch and changes task status to DEVELOP'
 
   static examples = [
@@ -20,7 +20,7 @@ export default class Start extends Command {
   static args = [{ name: 'taskId' }];
 
   public async run(): Promise<void> {
-    const { args, flags } = await this.parse(Start);
+    const { args, flags } = await this.parse(TaskStart);
 
     const { taskId } = args;
     assert(taskId, 'You must provide a task id');

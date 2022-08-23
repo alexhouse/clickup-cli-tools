@@ -1,9 +1,8 @@
-import Command from '../base'
-import ClickUp from "../api/clickup";
+import Command from '../../base'
 import * as assert from "assert";
 import { CliUx } from "@oclif/core";
 
-export default class View extends Command {
+export default class TaskView extends Command {
   static description = 'View a ClickUp ticket'
 
   static examples = [
@@ -14,7 +13,7 @@ export default class View extends Command {
   static args = [{ name: 'taskId' }];
 
   public async run(): Promise<void> {
-    const { args } = await this.parse(View)
+    const { args } = await this.parse(TaskView)
 
     const { taskId } = args;
     assert(taskId, 'You must provide a task id');
